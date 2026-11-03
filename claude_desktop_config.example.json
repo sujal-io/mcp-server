@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "application-strategist": {
+      "command": "node",
+      "args": ["C:\\ABSOLUTE\\PATH\\TO\\mcp-server\\dist\\index.js"]
+    }
+  }
+}

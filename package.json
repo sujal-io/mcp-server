@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
+    "scripts": {
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "dev": "tsx src/index.ts",
     "test:client": "tsx src/test-client.ts"
