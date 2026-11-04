@@ -1,31 +1,27 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
-
-const server = new McpServer({
-  name: "application-strategist-mcp",
-  version: "0.1.0",
-});
-
-server.registerTool(
-  "add",
-  {
-    title: "Add two numbers",
-    description: "Adds two numbers and returns the sum. Practice tool.",
-    inputSchema: { a: z.number(), b: z.number() },
-  },
-  async ({ a, b }) => ({
-    content: [{ type: "text", text: String(a + b) }],
-  })
-);
+import { loadConfig } from "./config.js";
+import { StrategistClient } from "./strategistClient.js";
+import { registerAnalyzeJobFit } from "./tools/analyzeJobFit.js";
 
 async function main() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  const config = loadConfig();
+  const client = new StrategistClient(config);
+
+  const server = new McpServer({
+    name: "application-strategist-mcp",
+    version: "0.2.0",
+  });
+
+  registerAnalyzeJobFit(server, client);
+
+  await server.connect(new StdioServerTransport());
   console.error("MCP server running on stdio");
+
+  client.warmUp();
 }
 
 main().catch((err) => {
-  console.error("Fatal error:", err);
+  console.error("Fatal error:", err instanceof Error ? err.message : err);
   process.exit(1);
 });
