@@ -6,8 +6,8 @@
     "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "dev": "tsx src/index.ts",
-    "test:client": "tsx src/test-client.ts"
+    "dev": "tsx --env-file=.env src/index.ts",
+    "test:client": "tsx --env-file=.env src/test-client.ts"
   },
   "repository": {
     "type": "git",

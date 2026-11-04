@@ -2,7 +2,11 @@
   "mcpServers": {
     "application-strategist": {
       "command": "node",
-      "args": ["C:\\ABSOLUTE\\PATH\\TO\\mcp-server\\dist\\index.js"]
+      "args": ["C:\\ABSOLUTE\\PATH\\TO\\mcp-server\\dist\\index.js"],
+      "env": {
+        "STRATEGIST_BASE_URL": "https://your-service.onrender.com",
+        "STRATEGIST_SERVICE_KEY": "paste-your-key-here"
+      }
     }
   }
 }
