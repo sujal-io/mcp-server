@@ -1,9 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { MemoryAnalysisStore } from "./analysisStore.js";
 import { loadConfig } from "./config.js";
 import { defaultDbPath, openDatabase } from "./db.js";
 import { StrategistClient } from "./strategistClient.js";
 import { registerAnalyzeJobFit } from "./tools/analyzeJobFit.js";
+import { registerRewriteBullet } from "./tools/rewriteBullet.js";
 import { registerTrackerTools } from "./tools/trackerTools.js";
 
 async function main() {
@@ -16,10 +18,13 @@ async function main() {
 
   const server = new McpServer({
     name: "application-strategist-mcp",
-    version: "0.3.0",
+    version: "0.4.0",
   });
 
-  registerAnalyzeJobFit(server, client);
+  const store = new MemoryAnalysisStore();
+
+  registerAnalyzeJobFit(server, client, store);
+  registerRewriteBullet(server, client, store);
   registerTrackerTools(server, db, () => new Date());
 
   await server.connect(new StdioServerTransport());
