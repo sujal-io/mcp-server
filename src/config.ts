@@ -4,6 +4,7 @@ const EnvSchema = z.object({
   STRATEGIST_BASE_URL: z.string().url(),
   STRATEGIST_SERVICE_KEY: z.string().min(16, "must be at least 16 characters"),
   STRATEGIST_TIMEOUT_MS: z.coerce.number().int().positive().default(55000),
+    TRACKER_DB_PATH: z.string().min(1).optional(),
 });
 
 export type Config = z.infer<typeof EnvSchema>;

@@ -7,7 +7,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "dev": "tsx --env-file=.env src/index.ts",
-    "test:client": "tsx --env-file=.env src/test-client.ts"
+    "test:client": "tsx --env-file=.env src/test-client.ts",
+    "test:tracker": "tsx src/test-tracker-client.ts"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,11 @@
   "homepage": "https://github.com/sujal-io/mcp-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",
+    "better-sqlite3": "^13.0.3",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
