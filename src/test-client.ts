@@ -25,18 +25,40 @@ const transport = new StdioClientTransport({
 const client = new Client({ name: "test-client", version: "1.0.0" });
 await client.connect(transport);
 
-const tools = await client.listTools();
-console.log("TOOLS:", tools.tools.map((t) => t.name));
+console.log("TOOLS:", (await client.listTools()).tools.map((t) => t.name));
 
-console.log("Calling analyze_job_fit (this can take up to a minute)...");
-const result = await client.callTool({
-  name: "analyze_job_fit",
-  arguments: { jobDescription: SAMPLE_JOB_DESCRIPTION },
-});
+type Block = { type: string; text?: string };
 
-console.log("IS ERROR:", result.isError ?? false);
-for (const block of result.content as Array<{ type: string; text?: string }>) {
-  if (block.type === "text") console.log(block.text);
+async function call(name: string, args: Record<string, unknown>) {
+  const result = await client.callTool({ name, arguments: args });
+  const text = (result.content as Block[]).find((b) => b.type === "text")?.text ?? "";
+  console.log(`\n--- ${name} (isError: ${result.isError ?? false})`);
+  console.log(text.length > 1500 ? `${text.slice(0, 1500)}\n...(shortened)` : text);
+  return { isError: Boolean(result.isError), text };
+}
+
+console.log("\nStep 1: analyze the job description (real call, can take up to a minute)");
+const first = await call("analyze_job_fit", { jobDescription: SAMPLE_JOB_DESCRIPTION });
+
+if (first.isError) {
+  await client.close();
+  process.exit(1);
+}
+
+const analysis = JSON.parse(first.text) as {
+  analysisId: string;
+  mostRelevantBullets: Array<{ bulletId: string }>;
+};
+
+console.log("\nStep 2: same job description again (should be instant and say cached: true)");
+const started = Date.now();
+await call("analyze_job_fit", { jobDescription: SAMPLE_JOB_DESCRIPTION });
+console.log(`Took ${Date.now() - started} ms`);
+
+const bulletId = analysis.mostRelevantBullets[0]?.bulletId;
+if (bulletId) {
+  console.log("\nStep 3: rewrite the most relevant bullet for this job");
+  await call("rewrite_bullet", { analysisId: analysis.analysisId, bulletId });
 }
 
 await client.close();

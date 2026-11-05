@@ -49,6 +49,12 @@ async function errorFromResponse(res: Response): Promise<StrategistError> {
   }
 
   if (res.status === 404) {
+        if (/bullet not found/i.test(detail)) {
+      return new StrategistError(
+        "not_found",
+        "That bullet is no longer in the stored resume. Run analyze_job_fit again with refresh set to true to get current bullet IDs."
+      );
+    }
     if (/resume not found/i.test(detail)) {
       return new StrategistError(
         "not_found",
