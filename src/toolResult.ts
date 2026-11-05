@@ -20,3 +20,7 @@ export function errorResult(err: unknown): CallToolResult {
     content: [{ type: "text", text: "Something unexpected went wrong inside the MCP server." }],
   };
 }
+
+export function plainError(message: string): CallToolResult {
+  return { isError: true, content: [{ type: "text", text: message }] };
+}
