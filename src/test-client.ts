@@ -19,6 +19,7 @@ const transport = new StdioClientTransport({
     ...getDefaultEnvironment(),
     STRATEGIST_BASE_URL: process.env.STRATEGIST_BASE_URL ?? "",
     STRATEGIST_SERVICE_KEY: process.env.STRATEGIST_SERVICE_KEY ?? "",
+    REDIS_URL: process.env.REDIS_URL ?? "", // empty means "not set"
   },
 });
 

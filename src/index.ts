@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { MemoryAnalysisStore } from "./analysisStore.js";
+import { createCache } from "./cache.js";
 import { loadConfig } from "./config.js";
 import { defaultDbPath, openDatabase } from "./db.js";
 import { StrategistClient } from "./strategistClient.js";
@@ -16,16 +16,26 @@ async function main() {
   const db = openDatabase(dbPath);
   console.error(`Tracker database: ${dbPath}`);
 
+  const cache = createCache(config);
+
   const server = new McpServer({
     name: "application-strategist-mcp",
-    version: "0.4.0",
+    version: "0.5.0",
   });
 
-  const store = new MemoryAnalysisStore();
-
-  registerAnalyzeJobFit(server, client, store);
-  registerRewriteBullet(server, client, store);
+  registerAnalyzeJobFit(server, client, cache.store);
+  registerRewriteBullet(server, client, cache.store);
   registerTrackerTools(server, db, () => new Date());
+
+  // A Redis connection keeps the process alive. When Claude Desktop closes the
+  // pipe we must shut down ourselves, or the server would linger in the background.
+  const shutdown = () => {
+    cache.close();
+    db.close();
+    process.exit(0);
+  };
+  process.stdin.on("end", shutdown);
+  process.stdin.on("close", shutdown);
 
   await server.connect(new StdioServerTransport());
   console.error("MCP server running on stdio");
