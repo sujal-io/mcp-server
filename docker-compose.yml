@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: application-strategist-redis
+    # 127.0.0.1 means only this computer can reach Redis, never the network.
+    ports:
+      - "127.0.0.1:6379:6379"
+    # Treat Redis as a disposable cache: no saving to disk, 64 MB cap,
+    # and when full, drop the least recently used keys.
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
+    restart: unless-stopped

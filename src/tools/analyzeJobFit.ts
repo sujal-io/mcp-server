@@ -97,12 +97,12 @@ export function registerAnalyzeJobFit(
           parsed.data.data;
 
         const summary = {
-          role: structuredJobDescription.role ?? null,
-          company: structuredJobDescription.company ?? null,
+          role: structuredJobDescription.role || null,
+          company: structuredJobDescription.company || null,
           matchPercentage: matchResult.matchPercentage,
           matchingSkills: matchResult.matchingSkills,
           missingSkills: matchResult.missingSkills,
-          extraSkills: matchResult.extraSkills,
+          extraSkills: matchResult.extraSkills.slice(0, 10),
           summary: recommendations.summary,
           strengths: recommendations.strengths,
           improvements: recommendations.improvements,
