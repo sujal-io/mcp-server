@@ -5,8 +5,10 @@
   "main": "index.js",
     "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "dev": "tsx --env-file=.env src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:client": "tsx --env-file=.env src/test-client.ts",
     "test:tracker": "tsx src/test-tracker-client.ts",
     "redis:up": "docker compose up -d",
@@ -35,6 +37,7 @@
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
   }
 }
